@@ -1,0 +1,12 @@
+name: quicklit
+title: quicklit
+username:
+account: lubianat
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3789216
+bundleId: 4343940
+url: https://lubianat.shinyapps.io/quicklit/
+when: 1615754839.84551
+asMultiple: FALSE
+asStatic: FALSE
