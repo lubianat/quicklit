@@ -9,17 +9,41 @@ ui <- fluidPage(
     p("(It takes up to 20 seconds to load, though)"),
     # Sidebar with a slider input for number of bins 
     # Show a plot of the generated distribution
-    actionButton("covid", "COVID-19 article"),
-            dataTableOutput("candidate_qids")
+    radioButtons(
+        inputId="radio",
+        label="Type of quick articles",
+        choices = c("COVID-19 article with author from Brazil",
+                    "COVID-19 article",
+                    "Brazilian bioinformatics article"),
+        selected = "COVID-19 article with author from Brazil",
+        inline = FALSE,
+        width = NULL,
+        choiceNames = NULL,
+        choiceValues = NULL
+    ),
+    
+    p("Tabernacle: Add main subjects and items that the project uses"),
+    p("Author Disambiguator: Disambiguate the authors of the paper"),
+    tags$a(target="_blank",
+           href = "https://github.com/lubianat/quicklit",
+           "GitHub Repository"), 
+    
+    dataTableOutput("candidate_qids")
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
     output$candidate_qids <- renderDataTable({
-        input$covid
-        a <- get_covid_df()
-        return(a)
+        type_of_article <- input$radio
+        if (type_of_article == "COVID-19 article"){
+            a <- prepare_dataset_for_page(query = "covid")
+        } else if (type_of_article == "COVID-19 article with author from Brazil"){
+            a <- prepare_dataset_for_page(query = "covid_brazil")
+        } else if (type_of_article == "Brazilian bioinformatics article"){
+            a <- prepare_dataset_for_page(query = "bioinfo_brazil")
+        }
+                    return(a)
     },
     escape = FALSE,
     options = list(dom = "t"))
