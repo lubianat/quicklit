@@ -12,8 +12,6 @@ prepare_dataset_for_page <- function(query="covid"){
   }  else if (query == "bioinfo_brazil"){
     articles_df <- get_brazil_bioinformatics_df()
   }
-
-  
   qids <- c()
   links <- c()
   for (u in articles_df[["item"]])
