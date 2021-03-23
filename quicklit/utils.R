@@ -2,6 +2,31 @@ library(stringr)
 library(httr)
 library(WikidataQueryServiceR)
 
+
+#' prepare_url
+#' 
+#' Prepares the link for a resource based on an wikidata qid for an artilce
+#' @param qid The wikidata wid
+#' @param resource The resource to prepare the url to. c("tabernacle",
+#'  "author_disambiguator", "scholia")
+prepare_url <-function(qid, resource) {
+  
+  if (resource == "tabernacle"){
+    ref = paste0("https://tabernacle.toolforge.org/?#/tab/manual/",
+                 qid,
+                 "/P921%3BP4510")
+  } else if (resource == "author_disambiguator"){
+    ref = paste0("https://author-disambiguator.toolforge.org/work_item_oauth.php?id=",
+                 qid,
+                 "&batch_id=&match=1&author_list_id=&doit=Get+author+links+for+work")
+  } else if (resource == "scholia"){
+    ref = paste0("https://scholia.toolforge.org/work/", qid)
+  }
+}
+
+
+
+
 #' @param query The type of query, one of c("covid", "covid_brazil", "bioinfo_brazil")
 prepare_dataset_for_page <- function(query="covid"){
   
@@ -27,7 +52,7 @@ prepare_dataset_for_page <- function(query="covid"){
   links <- c()
   for (qid in articles_df[["qid"]])
   {
-    ref = paste0("https://tabernacle.toolforge.org/?#/tab/manual/", qid, "/P921%3BP4510")
+    ref = prepare_url(qid, "tabernacle")
     link <- paste0('<a target="_blank" href=', ref, ">", "Tabernacle", "</a>")
     links <- c(links, link)
   }
@@ -36,7 +61,7 @@ prepare_dataset_for_page <- function(query="covid"){
   links <- c()
   for (qid in articles_df[["qid"]])
   {
-    ref = paste0("https://author-disambiguator.toolforge.org/work_item_oauth.php?id=", qid, "&batch_id=&match=1&author_list_id=&doit=Get+author+links+for+work")
+    ref = prepare_url(qid, "author_disambiguator")
     link <- paste0('<a target="_blank" href=', ref, ">", "Author Disambiguator", "</a>")
     links <- c(links, link)
   }
@@ -45,7 +70,7 @@ prepare_dataset_for_page <- function(query="covid"){
   links <- c()
   for (qid in articles_df[["qid"]])
   {
-    ref = paste0("https://scholia.toolforge.org/work/", qid)
+    ref = prepare_url(qid, "scholia")
     link <- paste0('<a target="_blank" href=', ref, ">", "Scholia", "</a>")
     links <- c(links, link)
   }
