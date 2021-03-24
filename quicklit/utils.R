@@ -141,8 +141,8 @@ SELECT (COUNT (DISTINCT ?item) as ?count) WHERE {
   
   count <- query_wikidata(count_query)[["count"]]
   
-  if (count >=  6) {
-    magic_number = round(runif(1, min = 1, max = count))
+  if (count >  6) {
+    magic_number = round(runif(1, min = 0, max = count-6))
     
   } else {
     magic_number = 0
@@ -161,6 +161,23 @@ SELECT DISTINCT ?item ?label WHERE {
 ORDER BY ?item OFFSET ', magic_number, ' LIMIT ', as.character(limit)
   )
   articles_df <- query_wikidata(query)
+  
+  qids <- c()
+  links <- c()
+  for (u in articles_df[["item"]])
+  {
+    qid <- str_replace(u, "http://www.wikidata.org/entity/", "")
+    qids <- c(qids, qid)
+  }
+  articles_df[["qid"]] <- qids
+  articles_df[["qid"]] <- qids
+  articles_df[["item"]] <- NULL
+  articles_df[["Wikidata"]] <- prepare_html_tags(qids, "wikidata")
+  articles_df[["Tabernacle"]] <-
+    prepare_html_tags(qids, "tabernacle")
+  articles_df[["Author Disambiguator"]] <-
+    prepare_html_tags(qids, "author_disambiguator")
+  articles_df[["Scholia"]] <- prepare_html_tags(qids, "scholia")
   
   return(articles_df)
 }

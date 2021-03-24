@@ -19,12 +19,16 @@ ui <- fluidPage(
         selected = "COVID-19 article with author from Brazil"),
     h3("Advanced"),
     radioButtons(
-        inputId = "radio",
+        inputId = "advanced_radio",
         label = "Type of advanced quick articles",
-        choices = c(
-            "By author",
-            "By institution"),
+        choices = c("By author"),
         selected = "By author"),
+    p("Example: Q42614737 (Helder Nakaya)"),
+    textInput(inputId = "qid",
+              label = "Q ID of author",
+              value = "Q42614737", width = NULL, placeholder = NULL),
+    actionButton("submit", "Go"),
+    
     p("Tabernacle: Add main subjects and items that the project uses"),
     p("Author Disambiguator: Disambiguate the authors of the paper"),
     
@@ -37,6 +41,15 @@ ui <- fluidPage(
 # Server ------------
 
 server <- function(input, output) {
+    
+    
+    text_reactive <- eventReactive( input$submit, {
+        qid <- input$qid
+        a <- get_articles_by_author(author_qid = qid)
+        return(a)
+    })
+    
+    
     output$candidate_qids <- renderDataTable({
         type_of_article <- input$radio
         if (type_of_article == "COVID-19 article") {
@@ -45,7 +58,12 @@ server <- function(input, output) {
             a <- prepare_dataset_for_page(query = "covid_brazil")
         } else if (type_of_article == "Brazilian bioinformatics article") {
             a <- prepare_dataset_for_page(query = "bioinfo_brazil")
-        } 
+        } else if (type_of_article == "Advanced"){
+            a <- text_reactive()
+
+            
+            
+        }
         return(a)
     },
     escape = FALSE,
