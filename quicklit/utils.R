@@ -87,7 +87,7 @@ prepare_dataset_for_page <- function(query = "covid") {
   articles_df[["Author Disambiguator"]] <-
     prepare_html_tags(qids, "author_disambiguator")
   articles_df[["Scholia"]] <- prepare_html_tags(qids, "scholia")
-
+  
   return(articles_df)
 }
 
@@ -121,6 +121,50 @@ as.character(limit),
   return(articles_df)
   
 }
+
+#' get_articles_by_author
+#'
+#' Return the articles with at least 1 author string to fill.
+#'
+#' @param author_qid The qid for the author of interest
+#' @param limit The limit of the SPARQL query. Defaults to 6.
+get_articles_by_author <- function(author_qid, limit=6) {
+  count_query = paste0(
+    '
+SELECT (COUNT (DISTINCT ?item) as ?count) WHERE {
+  ?item wdt:P50 wd:',
+    author_qid,
+    '.
+  ?item wdt:P2093 ?author_name_string.
+}
+')
+  
+  count <- query_wikidata(count_query)[["count"]]
+  
+  if (count >=  6) {
+    magic_number = round(runif(1, min = 1, max = count))
+    
+  } else {
+    magic_number = 0
+  }
+  
+  query = paste0(
+    '
+SELECT DISTINCT ?item ?label WHERE {
+  ?item wdt:P50 wd:',
+    author_qid,
+    '.
+  ?item rdfs:label ?label.
+  ?item wdt:P2093 ?author_name_string.
+  FILTER (lang(?label)="en")
+}
+ORDER BY ?item OFFSET ', magic_number, ' LIMIT ', as.character(limit)
+  )
+  articles_df <- query_wikidata(query)
+  
+  return(articles_df)
+}
+
 
 
 

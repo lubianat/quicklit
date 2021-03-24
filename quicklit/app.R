@@ -13,10 +13,18 @@ ui <- fluidPage(
         choices = c(
             "COVID-19 article with author from Brazil",
             "COVID-19 article",
-            "Brazilian bioinformatics article"
+            "Brazilian bioinformatics article",
+            "Advanced"
         ),
         selected = "COVID-19 article with author from Brazil"),
-    
+    h3("Advanced"),
+    radioButtons(
+        inputId = "radio",
+        label = "Type of advanced quick articles",
+        choices = c(
+            "By author",
+            "By institution"),
+        selected = "By author"),
     p("Tabernacle: Add main subjects and items that the project uses"),
     p("Author Disambiguator: Disambiguate the authors of the paper"),
     
@@ -37,7 +45,7 @@ server <- function(input, output) {
             a <- prepare_dataset_for_page(query = "covid_brazil")
         } else if (type_of_article == "Brazilian bioinformatics article") {
             a <- prepare_dataset_for_page(query = "bioinfo_brazil")
-        }
+        } 
         return(a)
     },
     escape = FALSE,
