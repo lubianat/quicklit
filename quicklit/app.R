@@ -21,11 +21,13 @@ ui <- fluidPage(
     radioButtons(
         inputId = "advanced_radio",
         label = "Type of advanced quick articles",
-        choices = c("By author"),
+        choices = c("By author",
+                    "By institution"),
         selected = "By author"),
-    p("Example: Q42614737 (Helder Nakaya)"),
+    p("Author example: Q42614737 (Helder Nakaya)"),
+    p("Institution example: Q102292035 (Graduate Interdisciplinary Program in Bioinformatics (USP))"),
     textInput(inputId = "qid",
-              label = "Q ID of author",
+              label = "Q ID of author/institution",
               value = "Q42614737", width = NULL, placeholder = NULL),
     actionButton("submit", "Go"),
     
@@ -45,7 +47,13 @@ server <- function(input, output) {
     
     text_reactive <- eventReactive( input$submit, {
         qid <- input$qid
-        a <- get_articles_by_author(author_qid = qid)
+        category <- input$advanced_radio
+        if (category == "By author"){
+            a <- get_articles_by_author(author_qid = qid)
+        } else if (category == "By institution"){
+            a <- get_articles_by_institution(institution_qid = qid)
+        }
+        
         return(a)
     })
     
