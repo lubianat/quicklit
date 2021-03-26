@@ -29,7 +29,7 @@ ui <- fluidPage(
     textInput(inputId = "qid",
               label = "Q ID of author/institution",
               value = "Q42614737", width = NULL, placeholder = NULL),
-    actionButton("submit", "Go"),
+    actionButton("submit", "Submit Advanced", class = "btn btn-primary"),
     
     p("Tabernacle: Add main subjects and items that the project uses"),
     p("Author Disambiguator: Disambiguate the authors of the paper"),
