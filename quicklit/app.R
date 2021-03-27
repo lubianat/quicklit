@@ -68,9 +68,6 @@ server <- function(input, output) {
             a <- prepare_dataset_for_page(query = "bioinfo_brazil")
         } else if (type_of_article == "Advanced"){
             a <- text_reactive()
-
-            
-            
         }
         return(a)
     },

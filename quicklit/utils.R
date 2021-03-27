@@ -2,6 +2,41 @@ library(stringr)
 library(httr)
 library(WikidataQueryServiceR)
 
+
+#' add_links_to_article_df
+#'
+#' takes an article_df and adds links
+#' @param article_df
+#' @return data.frame
+#'
+add_links_to_article_df <- function(articles_df) {
+  qids <- c()
+  for (u in articles_df[["item"]])
+  {
+    qid <- str_replace(u, "http://www.wikidata.org/entity/", "")
+    qids <- c(qids, qid)
+  }
+  articles_df[["qid"]] <- qids
+  articles_df[["item"]] <- NULL
+  articles_df[["Wikidata"]] <- prepare_html_tags(qids, "wikidata")
+  articles_df[["Tabernacle"]] <-
+    prepare_html_tags(qids, "tabernacle")
+  articles_df[["Author Disambiguator"]] <-
+    prepare_html_tags(qids, "author_disambiguator")
+  articles_df[["Scholia"]] <- prepare_html_tags(qids, "scholia")
+  return(articles_df)
+}
+
+
+
+
+
+
+
+
+
+
+
 #' prepare_html_tags
 #'
 #' Prepares the html tags based on a list of qids
@@ -72,21 +107,7 @@ prepare_dataset_for_page <- function(query = "covid") {
   }  else if (query == "bioinfo_brazil") {
     articles_df <- get_brazil_bioinformatics_df()
   }
-  qids <- c()
-  links <- c()
-  for (u in articles_df[["item"]])
-  {
-    qid <- str_replace(u, "http://www.wikidata.org/entity/", "")
-    qids <- c(qids, qid)
-  }
-  articles_df[["qid"]] <- qids
-  articles_df[["item"]] <- NULL
-  articles_df[["Wikidata"]] <- prepare_html_tags(qids, "wikidata")
-  articles_df[["Tabernacle"]] <-
-    prepare_html_tags(qids, "tabernacle")
-  articles_df[["Author Disambiguator"]] <-
-    prepare_html_tags(qids, "author_disambiguator")
-  articles_df[["Scholia"]] <- prepare_html_tags(qids, "scholia")
+  articles_df <- add_links_to_article_df(articles_df)
   
   return(articles_df)
 }
@@ -117,7 +138,6 @@ as.character(limit),
 '
   )
   articles_df <- query_wikidata(query)
-  
   return(articles_df)
   
 }
@@ -129,7 +149,7 @@ as.character(limit),
 #'
 #' @param institution_qid The qid for the institution of interest
 #' @param limit The limit of the SPARQL query. Defaults to 6.
-get_articles_by_institution <- function(institution_qid, limit=6) {
+get_articles_by_institution <- function(institution_qid, limit = 6) {
   count_query = paste0(
     '
 SELECT (COUNT (DISTINCT ?item) as ?count) WHERE {
@@ -143,10 +163,12 @@ SELECT (COUNT (DISTINCT ?item) as ?count) WHERE {
   
   count <- query_wikidata(count_query)[["count"]]
   
-  if (count >  6) {
-    magic_number = round(runif(1, min = 0, max = count-6))
+  if (count >  6)
+  {
+    magic_number = round(runif(1, min = 0, max = count  -  6))
     
-  } else {
+  } else
+  {
     magic_number = 0
   }
   
@@ -165,22 +187,7 @@ ORDER BY ?item OFFSET ', magic_number, ' LIMIT ', as.character(limit)
   )
   articles_df <- query_wikidata(query)
   
-  qids <- c()
-  links <- c()
-  for (u in articles_df[["item"]])
-  {
-    qid <- str_replace(u, "http://www.wikidata.org/entity/", "")
-    qids <- c(qids, qid)
-  }
-  articles_df[["qid"]] <- qids
-  articles_df[["qid"]] <- qids
-  articles_df[["item"]] <- NULL
-  articles_df[["Wikidata"]] <- prepare_html_tags(qids, "wikidata")
-  articles_df[["Tabernacle"]] <-
-    prepare_html_tags(qids, "tabernacle")
-  articles_df[["Author Disambiguator"]] <-
-    prepare_html_tags(qids, "author_disambiguator")
-  articles_df[["Scholia"]] <- prepare_html_tags(qids, "scholia")
+  articles_df <- add_links_to_article_df(articles_df)
   
   return(articles_df)
 }
@@ -195,7 +202,7 @@ ORDER BY ?item OFFSET ', magic_number, ' LIMIT ', as.character(limit)
 #'
 #' @param author_qid The qid for the author of interest
 #' @param limit The limit of the SPARQL query. Defaults to 6.
-get_articles_by_author <- function(author_qid, limit=6) {
+get_articles_by_author <- function(author_qid, limit = 6) {
   count_query = paste0(
     '
 SELECT (COUNT (DISTINCT ?item) as ?count) WHERE {
@@ -208,10 +215,12 @@ SELECT (COUNT (DISTINCT ?item) as ?count) WHERE {
   
   count <- query_wikidata(count_query)[["count"]]
   
-  if (count >  6) {
-    magic_number = round(runif(1, min = 0, max = count-6))
+  if (count >  6)
+  {
+    magic_number = round(runif(1, min = 0, max = count  -  6))
     
-  } else {
+  } else
+  {
     magic_number = 0
   }
   
@@ -229,22 +238,7 @@ ORDER BY ?item OFFSET ', magic_number, ' LIMIT ', as.character(limit)
   )
   articles_df <- query_wikidata(query)
   
-  qids <- c()
-  links <- c()
-  for (u in articles_df[["item"]])
-  {
-    qid <- str_replace(u, "http://www.wikidata.org/entity/", "")
-    qids <- c(qids, qid)
-  }
-  articles_df[["qid"]] <- qids
-  articles_df[["qid"]] <- qids
-  articles_df[["item"]] <- NULL
-  articles_df[["Wikidata"]] <- prepare_html_tags(qids, "wikidata")
-  articles_df[["Tabernacle"]] <-
-    prepare_html_tags(qids, "tabernacle")
-  articles_df[["Author Disambiguator"]] <-
-    prepare_html_tags(qids, "author_disambiguator")
-  articles_df[["Scholia"]] <- prepare_html_tags(qids, "scholia")
+  articles_df <- add_links_to_article_df(articles_df)
   
   return(articles_df)
 }
