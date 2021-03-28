@@ -5,39 +5,49 @@ source("utils.R")
 
 ui <- fluidPage(
     titlePanel("QuickLit"),
-    h4("A quick suggestion on a contribution to Wikidata"),
-    p("(It takes up to 20 seconds to load, though)"),
-    radioButtons(
-        inputId = "radio",
-        label = "Type of quick articles",
-        choices = c(
-            "COVID-19 article with author from Brazil",
-            "COVID-19 article",
-            "Brazilian bioinformatics article",
-            "Advanced"
+    
+    sidebarLayout(
+        sidebarPanel(
+            
+            h4("A quick suggestion on a contribution to Wikidata"),
+            p("(It takes up to 20 seconds to load, though)"),
+            radioButtons(
+                inputId = "radio",
+                label = "Type of quick articles",
+                choices = c(
+                    "COVID-19 article with author from Brazil",
+                    "COVID-19 article",
+                    "Brazilian bioinformatics article",
+                    "Advanced"
+                ),
+                selected = "COVID-19 article with author from Brazil"),
+            h3("Advanced"),
+            radioButtons(
+                inputId = "advanced_radio",
+                label = "Type of advanced quick articles",
+                choices = c("By author",
+                            "By institution"),
+                selected = "By author"),
+            p("Author example: Q42614737 (Helder Nakaya)"),
+            p("Institution example: Q102292035 (Graduate Interdisciplinary Program in Bioinformatics (USP))"),
+            textInput(inputId = "qid",
+                      label = "Q ID of author/institution",
+                      value = "Q42614737", width = NULL, placeholder = NULL),
+            actionButton("submit", "Submit Advanced", class = "btn btn-primary"),
+            
+            tags$a(target = "_blank",
+                   href = "https://github.com/lubianat/quicklit",
+                   "GitHub Repository"),
+            
         ),
-        selected = "COVID-19 article with author from Brazil"),
-    h3("Advanced"),
-    radioButtons(
-        inputId = "advanced_radio",
-        label = "Type of advanced quick articles",
-        choices = c("By author",
-                    "By institution"),
-        selected = "By author"),
-    p("Author example: Q42614737 (Helder Nakaya)"),
-    p("Institution example: Q102292035 (Graduate Interdisciplinary Program in Bioinformatics (USP))"),
-    textInput(inputId = "qid",
-              label = "Q ID of author/institution",
-              value = "Q42614737", width = NULL, placeholder = NULL),
-    actionButton("submit", "Submit Advanced", class = "btn btn-primary"),
-    
-    p("Tabernacle: Add main subjects and items that the project uses"),
-    p("Author Disambiguator: Disambiguate the authors of the paper"),
-    
-    tags$a(target = "_blank",
-           href = "https://github.com/lubianat/quicklit",
-           "GitHub Repository"),
-    dataTableOutput("candidate_qids")
+        mainPanel(
+            p("Tabernacle: Add main subjects and items that the project uses"),
+            p("Author Disambiguator: Disambiguate the authors of the paper"),
+            dataTableOutput("candidate_qids")
+        )
+    )
+   
+
 )
 
 # Server ------------
