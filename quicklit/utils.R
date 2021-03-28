@@ -16,9 +16,7 @@ add_links_to_article_df <- function(articles_df) {
     qid <- str_replace(u, "http://www.wikidata.org/entity/", "")
     qids <- c(qids, qid)
   }
-  articles_df[["qid"]] <- qids
   articles_df[["item"]] <- NULL
-  articles_df[["Wikidata"]] <- prepare_html_tags(qids, "wikidata")
   articles_df[["Tabernacle"]] <-
     prepare_html_tags(qids, "tabernacle")
   articles_df[["Author Disambiguator"]] <-
