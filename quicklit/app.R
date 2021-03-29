@@ -7,19 +7,18 @@ ui <- fluidPage(titlePanel("QuickLit"),
                 
                 sidebarLayout(
                     sidebarPanel(
+                        h4("A quick suggestion on a contribution to Wikidata"),
+                        p("(It takes up to 20 seconds to load, though)"),
                         tabsetPanel(
                             id = "tabset",
                             tabPanel("Basic",
-                        h4("A quick suggestion on a contribution to Wikidata"),
-                        p("(It takes up to 20 seconds to load, though)"),
                         radioButtons(
                             inputId = "radio",
                             label = "Type of quick articles",
                             choices = c(
                                 "COVID-19 article with author from Brazil",
                                 "COVID-19 article",
-                                "Brazilian bioinformatics article",
-                                "Advanced"
+                                "Brazilian bioinformatics article"
                             ),
                             selected = "COVID-19 article with author from Brazil"
                         )
