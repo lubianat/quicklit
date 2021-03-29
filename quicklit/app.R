@@ -8,6 +8,7 @@ ui <- fluidPage(titlePanel("QuickLit"),
                 sidebarLayout(
                     sidebarPanel(
                         tabsetPanel(
+                            id = "tabset",
                             tabPanel("Basic",
                         h4("A quick suggestion on a contribution to Wikidata"),
                         p("(It takes up to 20 seconds to load, though)"),
@@ -25,11 +26,11 @@ ui <- fluidPage(titlePanel("QuickLit"),
                         ),
                         tabPanel("Advanced",
                         fluidRow(
-                            column(8, 
+                            column(5, 
                                    
                                    radioButtons(
                                        inputId = "advanced_radio",
-                                       label = "Type of advanced quick articles",
+                                       label = "Type of query",
                                        choices = c("By author",
                                                    "By institution",
                                                    "By topic"),
@@ -38,7 +39,7 @@ ui <- fluidPage(titlePanel("QuickLit"),
                                    
                                    
                             ),
-                            column(4, 
+                            column(7, 
                                    textInput(
                                        inputId = "qid",
                                        label = "Q ID",
@@ -50,6 +51,7 @@ ui <- fluidPage(titlePanel("QuickLit"),
                                   
                             )
                         ),
+                        br(),
   
                         p("Author example: Q42614737 (Helder Nakaya)"),
                         p(
@@ -92,15 +94,21 @@ server <- function(input, output) {
     
     
     output$candidate_qids <- renderDataTable({
+        
         type_of_article <- input$radio
-        if (type_of_article == "COVID-19 article")
-        {
-            a <- prepare_dataset_for_page(query = "covid")
-        } else if (type_of_article == "COVID-19 article with author from Brazil") {
-            a <- prepare_dataset_for_page(query = "covid_brazil")
-        } else if (type_of_article == "Brazilian bioinformatics article") {
-            a <- prepare_dataset_for_page(query = "bioinfo_brazil")
-        } else if (type_of_article == "Advanced") {
+        tabset <- input$tabset
+        
+        if (tabset == "Basic"){
+            if (type_of_article == "COVID-19 article")
+            {
+                a <- prepare_dataset_for_page(query = "covid")
+            } else if (type_of_article == "COVID-19 article with author from Brazil") {
+                a <- prepare_dataset_for_page(query = "covid_brazil")
+            } else if (type_of_article == "Brazilian bioinformatics article") {
+                a <- prepare_dataset_for_page(query = "bioinfo_brazil")
+        }
+      
+        } else if (tabset == "Advanced") {
             a <- text_reactive()
         }
         return(a)
