@@ -7,6 +7,8 @@ ui <- fluidPage(titlePanel("QuickLit"),
                 
                 sidebarLayout(
                     sidebarPanel(
+                        tabsetPanel(
+                            tabPanel("Basic",
                         h4("A quick suggestion on a contribution to Wikidata"),
                         p("(It takes up to 20 seconds to load, though)"),
                         radioButtons(
@@ -19,8 +21,9 @@ ui <- fluidPage(titlePanel("QuickLit"),
                                 "Advanced"
                             ),
                             selected = "COVID-19 article with author from Brazil"
+                        )
                         ),
-                        h3("Advanced"),
+                        tabPanel("Advanced",
                         fluidRow(
                             column(8, 
                                    
@@ -52,13 +55,16 @@ ui <- fluidPage(titlePanel("QuickLit"),
                         p(
                             "Institution example: Q102292035 (Graduate Interdisciplinary Program in Bioinformatics (USP))"
                         ),
-                        p("Topic example: Q10509939 (grey hair)"),
+                        p("Topic example: Q10509939 (grey hair)")
+                        
+                        ),
 
                         
                         tags$a(target = "_blank",
                                href = "https://github.com/lubianat/quicklit",
-                               "GitHub Repository"),
-                        
+                               "GitHub Repository")
+                     
+                        )   
                     ),
                     mainPanel(
                         p("Tabernacle: Add main subjects and items that the project uses"),
