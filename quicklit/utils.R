@@ -140,6 +140,65 @@ as.character(limit),
   
 }
 
+#' get_articles_by_topic
+#'
+#' Return the articles with at least 1 author string to fill 
+#' that have a specific main subject. 
+#'
+#' @param subject_qid The qid for the institution of interest
+#' @param limit The limit of the SPARQL query. Defaults to 6.
+get_articles_by_topic <- function(subject_qid, limit = 6) {
+  count_query = paste0(
+    '
+SELECT (COUNT (DISTINCT ?item) as ?count) WHERE {
+  ?item wdt:P921 wd:',
+    subject_qid,
+    '.
+  ?item wdt:P2093 ?author_name_string.
+}
+')
+  
+  count <- query_wikidata(count_query)[["count"]]
+  
+  if (count >  6)
+  {
+    magic_number = round(runif(1, min = 0, max = count  -  6))
+    
+  } else
+  {
+    magic_number = 0
+  }
+  
+  query = paste0(
+    '
+SELECT DISTINCT ?item ?label WHERE {
+  ?item wdt:P921 wd:',
+    subject_qid,
+    '.
+  ?item wdt:P2093 ?author_name_string.
+  ?item rdfs:label ?label.
+  FILTER (lang(?label)="en")
+}
+ORDER BY ?item OFFSET ', magic_number, ' LIMIT ', as.character(limit)
+  )
+  articles_df <- query_wikidata(query)
+  
+  articles_df <- add_links_to_article_df(articles_df)
+  
+  return(articles_df)
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 #' get_articles_by_institution
 #'
