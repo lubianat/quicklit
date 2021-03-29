@@ -11,61 +11,78 @@ ui <- fluidPage(titlePanel("QuickLit"),
                         p("(It takes up to 20 seconds to load, though)"),
                         tabsetPanel(
                             id = "tabset",
-                            tabPanel("Basic",
-                        radioButtons(
-                            inputId = "radio",
-                            label = "Type of quick articles",
-                            choices = c(
-                                "COVID-19 article with author from Brazil",
-                                "COVID-19 article",
-                                "Brazilian bioinformatics article"
+                            tabPanel(
+                                "Basic",
+                                radioButtons(
+                                    inputId = "radio",
+                                    label = "Type of quick articles",
+                                    choices = c(
+                                        "COVID-19 article with author from Brazil",
+                                        "COVID-19 article",
+                                        "Brazilian bioinformatics article"
+                                    ),
+                                    selected = "COVID-19 article with author from Brazil"
+                                )
                             ),
-                            selected = "COVID-19 article with author from Brazil"
+                            tabPanel(
+                                "Advanced",
+                                fluidRow(
+                                    column(
+                                        5,
+                                        
+                                        radioButtons(
+                                            inputId = "advanced_radio",
+                                            label = "Type of query",
+                                            choices = c("By author",
+                                                        "By institution",
+                                                        "By topic"),
+                                            selected = "By author"
+                                        ),
+                                        
+                                        
+                                    ),
+                                    column(
+                                        7,
+                                        textInput(
+                                            inputId = "qid",
+                                            label = "Q ID",
+                                            value = "Q42614737",
+                                            width = NULL,
+                                            placeholder = NULL
+                                        ),
+                                        actionButton("submit", "Submit", class = "btn btn-primary"),
+                                        
+                                    )
+                                ),
+                                br(),
+                                
+                                p("Author example: Q42614737 (Helder Nakaya)"),
+                                p(
+                                    "Institution example: Q102292035 (Graduate Interdisciplinary Program in Bioinformatics (USP))"
+                                ),
+                                p("Topic example: Q10509939 (grey hair)")
+                                
+                            ),
+                            tabPanel(  "Canities",
+                                
+                            p("Special tab for the canities project"),
+                            p("Article were pre-selected based on similarity with the subject"),
+                            actionButton("canities", "Refresh", class = "btn btn-primary"),
+                            
+                                
+                                
+                                
+                            ),
+                            
+                            
+                            
+                            
+                            
+                            tags$a(target = "_blank",
+                                   href = "https://github.com/lubianat/quicklit",
+                                   "GitHub Repository")
+                            
                         )
-                        ),
-                        tabPanel("Advanced",
-                        fluidRow(
-                            column(5, 
-                                   
-                                   radioButtons(
-                                       inputId = "advanced_radio",
-                                       label = "Type of query",
-                                       choices = c("By author",
-                                                   "By institution",
-                                                   "By topic"),
-                                       selected = "By author"
-                                   ),     
-                                   
-                                   
-                            ),
-                            column(7, 
-                                   textInput(
-                                       inputId = "qid",
-                                       label = "Q ID",
-                                       value = "Q42614737",
-                                       width = NULL,
-                                       placeholder = NULL
-                                   ),
-                                   actionButton("submit", "Submit", class = "btn btn-primary"),
-                                  
-                            )
-                        ),
-                        br(),
-  
-                        p("Author example: Q42614737 (Helder Nakaya)"),
-                        p(
-                            "Institution example: Q102292035 (Graduate Interdisciplinary Program in Bioinformatics (USP))"
-                        ),
-                        p("Topic example: Q10509939 (grey hair)")
-                        
-                        ),
-
-                        
-                        tags$a(target = "_blank",
-                               href = "https://github.com/lubianat/quicklit",
-                               "GitHub Repository")
-                     
-                        )   
                     ),
                     mainPanel(
                         p("Tabernacle: Add main subjects and items that the project uses"),
@@ -77,6 +94,18 @@ ui <- fluidPage(titlePanel("QuickLit"),
 # Server ------------
 
 server <- function(input, output) {
+    
+    
+    
+    canities_reactive <- eventReactive(input$canities, {
+        a <- get_articles_for_canities_project()
+        return(a)
+        
+    }
+        
+        
+    )
+    
     text_reactive <- eventReactive(input$submit, {
         qid <- input$qid
         category <- input$advanced_radio
@@ -93,11 +122,10 @@ server <- function(input, output) {
     
     
     output$candidate_qids <- renderDataTable({
-        
         type_of_article <- input$radio
         tabset <- input$tabset
         
-        if (tabset == "Basic"){
+        if (tabset == "Basic") {
             if (type_of_article == "COVID-19 article")
             {
                 a <- prepare_dataset_for_page(query = "covid")
@@ -105,10 +133,12 @@ server <- function(input, output) {
                 a <- prepare_dataset_for_page(query = "covid_brazil")
             } else if (type_of_article == "Brazilian bioinformatics article") {
                 a <- prepare_dataset_for_page(query = "bioinfo_brazil")
-        }
-      
+            }
+            
         } else if (tabset == "Advanced") {
             a <- text_reactive()
+        } else if (tabset == "Canities"){
+            a <- canities_reactive()
         }
         return(a)
     },

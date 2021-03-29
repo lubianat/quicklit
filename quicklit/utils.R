@@ -26,15 +26,6 @@ add_links_to_article_df <- function(articles_df) {
 }
 
 
-
-
-
-
-
-
-
-
-
 #' prepare_html_tags
 #'
 #' Prepares the html tags based on a list of qids
@@ -109,6 +100,76 @@ prepare_dataset_for_page <- function(query = "covid") {
   
   return(articles_df)
 }
+
+
+
+
+# SPARQL Query functions -----------------------
+
+#' get_articles_for_canities_project
+#'
+#' Return the articles within the scope of the Canities project.
+#' @param limit The limit of the SPARQL query. Defaults to 6.
+get_articles_for_canities_project <- function( limit = 6) {
+  
+  topics_of_interest <- c(
+    "Q10509939", # gray hair
+    "Q6933946", # white hair
+    "Q105566932", # hair graying
+    "Q48996667" # premature graying of hair
+    )
+  
+  values = "VALUES ?subject {"
+  
+  for (topic in topics_of_interest){
+    values = paste0(values, "wd:", topic, " ")
+  }
+  
+  values = paste0(values, "}.")
+  
+  count_query = paste0(
+    '
+SELECT (COUNT (DISTINCT ?item) as ?count) WHERE {
+  ', values ,'
+  ?item wdt:P921 ?subject.
+  ?item wdt:P2093 ?author_name_string.
+}
+')
+  
+  count <- query_wikidata(count_query)[["count"]]
+  
+  if (count >  6)
+  {
+    magic_number = round(runif(1, min = 0, max = count  -  6))
+    
+  } else
+  {
+    magic_number = 0
+  }
+  
+  query = paste0(
+    '
+SELECT DISTINCT ?item ?label WHERE {
+  ', values ,'
+  ?item wdt:P921 ?subject.
+  ?item wdt:P2093 ?author_name_string.
+  ?item rdfs:label ?label.
+  FILTER (lang(?label)="en")
+}
+ORDER BY ?item OFFSET ', magic_number, ' LIMIT ', as.character(limit)
+  )
+  articles_df <- query_wikidata(query)
+  
+  articles_df <- add_links_to_article_df(articles_df)
+  
+  return(articles_df)
+}
+
+
+
+
+
+
 
 
 get_brazil_bioinformatics_df <- function(limit = 6) {
