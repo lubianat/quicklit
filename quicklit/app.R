@@ -80,8 +80,13 @@ ui <- navbarPage(
                      )
                  ),
                  mainPanel(
-                     p("Tabernacle: Add main subjects and items that the project uses"),
-                     p("Author Disambiguator: Disambiguate the authors of the paper"),
+                     p(
+                         a(target = "_blank", href = 'https://tabernacle.toolforge.org/#/', 'TABernacle:'),
+                         'Add main subjects of this article.'
+                     ),
+                     p(
+                         a(target = "_blank", href = 'https://author-disambiguator.toolforge.org/', 'Author Disambiguator:'),
+                         'Tag the authors of the paper'),
                      dataTableOutput("candidate_qids")
                  )
              )),

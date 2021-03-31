@@ -35,11 +35,11 @@ add_links_to_article_df <- function(articles_df) {
 #'  "author_disambiguator", "scholia", "wikidata")
 prepare_html_tags <- function(qids, resource) {
   if (resource == "tabernacle") {
-    name = "Tabernacle"
+    name = "add topics"
   } else if (resource == "author_disambiguator") {
-    name = "Author Disambiguator"
+    name = "tag authors"
   } else if (resource == "scholia") {
-    name = "Scholia"
+    name = "see profile"
   } else if (resource == "wikidata") {
     name = "Wikidata"
   }
