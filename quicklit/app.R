@@ -8,8 +8,8 @@ ui <- navbarPage(
     tabPanel("Main",
              sidebarLayout(
                  sidebarPanel(
-                     h4("A quick suggestion on a contribution to Wikidata"),
-                     p("(It takes up to 20 seconds to load, though)"),
+                     h4("Adding topics and authors to Wikidata"),
+                     p("Select one of the topics below to get 6 suggestions of articles to fill"),
                      tabsetPanel(
                          id = "tabset",
                          tabPanel(
@@ -22,7 +22,7 @@ ui <- navbarPage(
                                      "COVID-19 article",
                                      "Brazilian bioinformatics article"
                                  ),
-                                 selected = "COVID-19 article with author from Brazil"
+                                 selected = "Brazilian bioinformatics article"
                              )
                          ),
                          tabPanel(
@@ -56,7 +56,6 @@ ui <- navbarPage(
                                  )
                              ),
                              br(),
-                             
                              p("Author example: Q42614737 (Helder Nakaya)"),
                              p(
                                  "Institution example: Q102292035 (Graduate Interdisciplinary Program in Bioinformatics (USP))"
@@ -80,13 +79,20 @@ ui <- navbarPage(
                      )
                  ),
                  mainPanel(
-                     p(
-                         a(target = "_blank", href = 'https://tabernacle.toolforge.org/#/', 'TABernacle:'),
-                         'Add main subjects of this article.'
+                     h1("QuickLit: contributions to Wikidata"),
+                     
+                     br(),
+                     h4("QuickLit lists articles about that are in need of curation."),
+                     p("It is quick and painless, and you don't need to know the article:"),
+                     
+                     h3("Quickstart:"),
+                     p("- Click on 'add topics' to tell Wikidata what the article is about. 
+                     It is totally ok to infer topics from the title."),
+                     p("On the new page, you will need to lick on 'login' on the top right of the new page, and then enter info in the 'main subject' field"),
+                     p("- Click on 'add authors' to tell Wikidata who authored that work."),
+                     p( "Once the information is added, it will become part of the visualizations at the ",
+                        a(target = "_blank", href = 'https://scholia.toolforge.org/#/', 'Scholia platform')
                      ),
-                     p(
-                         a(target = "_blank", href = 'https://author-disambiguator.toolforge.org/', 'Author Disambiguator:'),
-                         'Tag the authors of the paper'),
                      dataTableOutput("candidate_qids")
                  )
              )),
