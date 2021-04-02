@@ -93,6 +93,9 @@ ui <- navbarPage(
                      p( "Once the information is added, it will become part of the visualizations at the ",
                         a(target = "_blank", href = 'https://scholia.toolforge.org/#/', 'Scholia platform')
                      ),
+                     
+                     p("Want to batch add a topic to all titles that match a string? Try ",
+                       a(target = "_blank", href = 'https://lubianat.shinyapps.io/topictagger/',"TopicTagger"), "!"),
                      dataTableOutput("candidate_qids")
                  )
              )),
