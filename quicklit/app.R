@@ -4,7 +4,9 @@ source("utils.R")
 
 # User Interface ------------
 theme <- bslib::bs_theme(
-    bootswatch = "darkly",
+    bg = "white",
+    fg = "black",
+    primary = "darkgreen",
     secondary = "wheat",
     base_font = "Lato",
     heading_font = "arial",
@@ -80,6 +82,7 @@ ui <- navbarPage(
                              actionButton("canities", "Refresh", class = "btn btn-primary"),
                          ),
                          h3("Quickstart"),
+                         p("Click on the Refresh button to list articles"),
                          p("Click on a link to open a tab for the editing page."),
                          p("Click on:"),
                          tags$ol(
@@ -140,8 +143,16 @@ server <- function(input, output) {
     })
     
     
-    basic_reactive <- eventReactive(input$canities, {
-        a <- get_articles_for_canities_project()
+    basic_reactive <- eventReactive(input$`basic-refresh`, {
+        type_of_article <- input$radio
+        if (type_of_article == "COVID-19 article")
+        {
+            a <- prepare_dataset_for_page(query = "covid")
+        } else if (type_of_article == "COVID-19 article with author from Brazil") {
+            a <- prepare_dataset_for_page(query = "covid_brazil")
+        } else if (type_of_article == "Brazilian bioinformatics article") {
+            a <- prepare_dataset_for_page(query = "bioinfo_brazil")
+        }
         return(a)
         
     })
@@ -151,15 +162,7 @@ server <- function(input, output) {
         tabset <- input$tabset
         
         if (tabset == "Basic") {
-            if (type_of_article == "COVID-19 article")
-            {
-                a <- prepare_dataset_for_page(query = "covid")
-            } else if (type_of_article == "COVID-19 article with author from Brazil") {
-                a <- prepare_dataset_for_page(query = "covid_brazil")
-            } else if (type_of_article == "Brazilian bioinformatics article") {
-                a <- prepare_dataset_for_page(query = "bioinfo_brazil")
-            }
-            
+            a <- basic_reactive()
         } else if (tabset == "Advanced") {
             a <- text_reactive()
         } else if (tabset == "Canities") {
