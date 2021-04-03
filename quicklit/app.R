@@ -4,9 +4,7 @@ source("utils.R")
 
 # User Interface ------------
 theme <- bslib::bs_theme(
-    bootswatch = "litera",
-    bg = "ivory", 
-    fg = "black",
+    bootswatch = "darkly",
     secondary = "wheat",
     base_font = "Lato",
     heading_font = "arial",
@@ -33,7 +31,8 @@ ui <- navbarPage(
                                      "Brazilian bioinformatics article"
                                  ),
                                  selected = "Brazilian bioinformatics article"
-                             )
+                             ),
+                             actionButton("basic-refresh", "Refresh", class = "btn btn-primary"),
                          ),
                          tabPanel(
                              "Advanced",
@@ -79,10 +78,6 @@ ui <- navbarPage(
                              p("Special tab for the canities project"),
                              p("Article were pre-selected based on similarity with the subject"),
                              actionButton("canities", "Refresh", class = "btn btn-primary"),
-                             
-                             
-                             
-                             
                          ),
                          h3("Quickstart"),
                          p("Click on a link to open a tab for the editing page."),
@@ -144,6 +139,12 @@ server <- function(input, output) {
         return(a)
     })
     
+    
+    basic_reactive <- eventReactive(input$canities, {
+        a <- get_articles_for_canities_project()
+        return(a)
+        
+    })
     
     output$candidate_qids <- renderDataTable({
         type_of_article <- input$radio
