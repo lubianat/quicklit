@@ -5,8 +5,8 @@ account: lubianat
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3789216
-bundleId: 4427328
+bundleId: 4427353
 url: https://lubianat.shinyapps.io/quicklit/
-when: 1617459631.50349
+when: 1617460456.81994
 asMultiple: FALSE
 asStatic: FALSE
