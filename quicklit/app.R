@@ -82,10 +82,8 @@ ui <- navbarPage(
                              actionButton("canities", "Refresh", class = "btn btn-primary"),
                          ),
                          h3("Quickstart"),
-                         p("Click on the Refresh button to list articles"),
-                         p("Click on a link to open a tab for the editing page."),
-                         p("Click on:"),
-                         tags$ol(
+                         p("Click on the Refresh button to list articles, and on  a link to open a new tab for the editing page. Click on:"),
+                         tags$ul(
                              tags$li(tags$strong("add topics"), " to tell us what the article is about. 
                      (You can infer from the title)."), 
                              tags$li(tags$strong("tag authors"), " to tell us who authored that work."), 
@@ -100,11 +98,9 @@ ui <- navbarPage(
                  ),
                  mainPanel(
                      h1("QuickLit: contributions to Wikidata"),
-                     
-                     br(),
-                     h4("QuickLit lists articles about that are in need of curation."),
+                     h4("Help with articles in need of curation."),
                      p("It is quick and painless, and you don't need to know the article"),
-                     p("Check the Quickstart on the left or the tutorial to get started"),
+                     p("Check the Quickstart on the leftl to get started"),
                      dataTableOutput("candidate_qids")
                  )
              )),
