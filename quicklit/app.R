@@ -1,10 +1,20 @@
 library(shiny)
+
 source("utils.R")
 
 # User Interface ------------
+theme <- bslib::bs_theme(
+    bootswatch = "litera",
+    bg = "ivory", 
+    fg = "black",
+    secondary = "wheat",
+    base_font = "Lato",
+    heading_font = "arial",
+)
 
 ui <- navbarPage(
     "QuickLit",
+    theme = theme,
     tabPanel("Main",
              sidebarLayout(
                  sidebarPanel(
@@ -73,7 +83,19 @@ ui <- navbarPage(
                              
                              
                              
-                         )
+                         ),
+                         h3("Quickstart"),
+                         p("Click on a link to open a tab for the editing page."),
+                         p("Click on:"),
+                         tags$ol(
+                             tags$li(tags$strong("add topics"), " to tell us what the article is about. 
+                     (You can infer from the title)."), 
+                             tags$li(tags$strong("tag authors"), " to tell us who authored that work."), 
+                             tags$li(tags$strong("see profile"), " to open the article on Scholia")
+                         ),
+                         p("Want to batch add a topic to all titles that match a string? Try ",
+                           a(target = "_blank", href = 'https://lubianat.shinyapps.io/topictagger/',"TopicTagger"), "!")
+                         
                          
                          
                      )
@@ -83,19 +105,8 @@ ui <- navbarPage(
                      
                      br(),
                      h4("QuickLit lists articles about that are in need of curation."),
-                     p("It is quick and painless, and you don't need to know the article:"),
-                     
-                     h3("Quickstart:"),
-                     p("- Click on 'add topics' to tell Wikidata what the article is about. 
-                     It is totally ok to infer topics from the title."),
-                     p("On the new page, you will need to lick on 'login' on the top right of the new page, and then enter info in the 'main subject' field"),
-                     p("- Click on 'add authors' to tell Wikidata who authored that work."),
-                     p( "Once the information is added, it will become part of the visualizations at the ",
-                        a(target = "_blank", href = 'https://scholia.toolforge.org/#/', 'Scholia platform')
-                     ),
-                     
-                     p("Want to batch add a topic to all titles that match a string? Try ",
-                       a(target = "_blank", href = 'https://lubianat.shinyapps.io/topictagger/',"TopicTagger"), "!"),
+                     p("It is quick and painless, and you don't need to know the article"),
+                     p("Check the Quickstart on the left or the tutorial to get started"),
                      dataTableOutput("candidate_qids")
                  )
              )),
