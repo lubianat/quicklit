@@ -84,10 +84,10 @@ ui <- navbarPage(
                          h3("Quickstart"),
                          p("Click on the Refresh button to list articles, and on  a link to open a new tab for the editing page. Click on:"),
                          tags$ul(
-                             tags$li(tags$strong("add topics"), " to tell us what the article is about. 
+                             tags$li(tags$b("add topics"), " to tell us what the article is about. 
                      (You can infer from the title)."), 
-                             tags$li(tags$strong("tag authors"), " to tell us who authored that work."), 
-                             tags$li(tags$strong("see profile"), " to open the article on Scholia")
+                             tags$li(tags$b("tag authors"), " to tell us who authored that work."), 
+                             tags$li(tags$b("see profile"), " to open the article on Scholia")
                          ),
                          p("Want to batch add a topic to all titles that match a string? Try ",
                            a(target = "_blank", href = 'https://lubianat.shinyapps.io/topictagger/',"TopicTagger"), "!")
