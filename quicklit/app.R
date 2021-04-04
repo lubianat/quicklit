@@ -64,7 +64,8 @@ ui <- navbarPage(
                                      ),
                                      actionButton("submit", "Submit", class = "btn btn-primary"),
                                      
-                                 )
+                                 ),
+                                 plotOutput("plot", width = "100%", height = 100),
                              ),
                              br(),
                              p("Author example: Q42614737 (Helder Nakaya)"),
@@ -117,6 +118,11 @@ ui <- navbarPage(
 # Server ------------
 
 server <- function(input, output) {
+    output$plot <- renderPlot({
+        author_qid <- input$qid
+        plot_author_complenetess_stack_bar(author_qid)
+    })
+    
     canities_reactive <- eventReactive(input$canities, {
         a <- get_articles_for_canities_project()
         return(a)

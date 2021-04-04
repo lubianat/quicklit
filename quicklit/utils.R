@@ -1,6 +1,69 @@
 library(stringr)
 library(httr)
 library(WikidataQueryServiceR)
+library(tidyr)
+library(ggplot2)
+
+plot_author_complenetess_stack_bar <- function(author_qid){
+  tidy_result <- get_author_completeness(author_qid)
+  tidy_result$name <- factor(tidy_result$name,
+                             levels=c("coauthors", "coauthor_strings"),
+                             labels=c("Coauthors reconciled", "Coauthors still as strings"))
+  p <- ggplot(tidy_result,aes(x=value,y=authorLabel,fill=name))+
+    geom_bar(stat="identity", position=position_stack(reverse = TRUE))+
+    ggtitle("Author completeness ") +
+    theme_minimal() +
+    theme(legend.position="bottom",
+          legend.title=element_blank(),
+          axis.title=element_blank(),
+          axis.text.y=element_blank(),
+          axis.ticks.y=element_blank(),
+          axis.text.x=element_text(size=20),
+          legend.text = element_text(size=12)) + 
+    labs(fill="")  + 
+    scale_fill_manual(values=c("seagreen", "wheat3"))
+  
+  return(p)
+}
+
+
+
+
+#' get_author_completeness
+#'
+#' Gets a dataframe that indicates how complete the information
+#' about an author is on Wikidata
+#'
+#' @param author_qid
+#' @return data.frame
+get_author_completeness <- function(author_qid) {
+  query = paste0(
+    '
+  SELECT
+?authorLabel
+(COUNT(DISTINCT ?item) as ?coauthors)
+(COUNT(DISTINCT ?string) as ?coauthor_strings)
+WHERE {
+   VALUES ?author {wd:',
+    author_qid ,
+    '}.
+   ?article wdt:P50 wd:',
+    author_qid ,
+    '.
+   ?article wdt:P50 ?item.
+   ?article wdt:P2093 ?string.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
+GROUP BY ?authorLabel
+')
+  
+  query_result <- query_wikidata(query)
+  tidy_result = tidyr::pivot_longer(query_result,
+                                    cols  =  c("coauthors",
+                                               "coauthor_strings")
+  )
+    return(tidy_result)
+}
 
 
 #' add_links_to_article_df
@@ -110,59 +173,67 @@ prepare_dataset_for_page <- function(query = "covid") {
 #'
 #' Return the articles within the scope of the Canities project.
 #' @param limit The limit of the SPARQL query. Defaults to 6.
-get_articles_for_canities_project <- function( limit = 6) {
-  
+get_articles_for_canities_project <- function(limit = 6) {
   topics_of_interest <- c(
-    "Q10509939", # gray hair
-    "Q6933946", # white hair
-    "Q105566932", # hair graying
+    "Q10509939",
+    # gray hair
+    "Q6933946",
+    # white hair
+    "Q105566932",
+    # hair graying
     "Q48996667" # premature graying of hair
     )
-  
-  values = "VALUES ?subject {"
-  
-  for (topic in topics_of_interest){
-    values = paste0(values, "wd:", topic, " ")
-  }
-  
-  values = paste0(values, "}.")
-  
-  count_query = paste0(
-    '
+    
+    values = "VALUES ?subject {"
+    
+    for (topic in topics_of_interest) {
+      values = paste0(values, "wd:", topic, " ")
+    }
+    
+    values = paste0(values, "}.")
+    
+    count_query = paste0(
+      '
 SELECT (COUNT (DISTINCT ?item) as ?count) WHERE {
-  ', values ,'
+  ',
+      values ,
+      '
   ?item wdt:P921 ?subject.
   ?item wdt:P2093 ?author_name_string.
 }
 ')
-  
-  count <- query_wikidata(count_query)[["count"]]
-  
-  if (count >  6)
-  {
-    magic_number = round(runif(1, min = 0, max = count  -  6))
     
-  } else
-  {
-    magic_number = 0
-  }
-  
-  query = paste0(
-    '
+    count <-
+      query_wikidata(count_query)[["count"]]
+    
+    if (count >  6)
+    {
+      magic_number = round(runif(1, min = 0, max = count  -  6))
+      
+    } else
+    {
+      magic_number = 0
+    }
+    
+    query = paste0(
+      '
 SELECT DISTINCT ?item ?label WHERE {
-  ', values ,'
+  ',
+      values ,
+      '
   ?item wdt:P921 ?subject.
   ?item wdt:P2093 ?author_name_string.
   ?item rdfs:label ?label.
   FILTER (lang(?label)="en")
 }
 ORDER BY ?item OFFSET ', magic_number, ' LIMIT ', as.character(limit)
-  )
-  articles_df <- query_wikidata(query)
-  
-  articles_df <- add_links_to_article_df(articles_df)
-  
-  return(articles_df)
+    )
+    articles_df <- query_wikidata(query)
+    
+    articles_df <-
+      add_links_to_article_df(articles_df)
+    
+    return(articles_df)
 }
 
 
@@ -203,8 +274,8 @@ as.character(limit),
 
 #' get_articles_by_topic
 #'
-#' Return the articles with at least 1 author string to fill 
-#' that have a specific main subject. 
+#' Return the articles with at least 1 author string to fill
+#' that have a specific main subject.
 #'
 #' @param subject_qid The qid for the institution of interest
 #' @param limit The limit of the SPARQL query. Defaults to 6.
@@ -267,48 +338,49 @@ ORDER BY ?item OFFSET ', magic_number, ' LIMIT ', as.character(limit)
 #'
 #' @param institution_qid The qid for the institution of interest
 #' @param limit The limit of the SPARQL query. Defaults to 6.
-get_articles_by_institution <- function(institution_qid, limit = 6) {
-  count_query = paste0(
-    '
+get_articles_by_institution <-
+  function(institution_qid, limit = 6) {
+    count_query = paste0(
+      '
 SELECT (COUNT (DISTINCT ?item) as ?count) WHERE {
   ?item wdt:P50 ?author.
   ?author wdt:P108 | wdt:P1416 wd:',
-    institution_qid,
-    '.
+      institution_qid,
+      '.
   ?item wdt:P2093 ?author_name_string.
 }
 ')
-  
-  count <- query_wikidata(count_query)[["count"]]
-  
-  if (count >  6)
-  {
-    magic_number = round(runif(1, min = 0, max = count  -  6))
     
-  } else
-  {
-    magic_number = 0
-  }
-  
-  query = paste0(
-    '
+    count <- query_wikidata(count_query)[["count"]]
+    
+    if (count >  6)
+    {
+      magic_number = round(runif(1, min = 0, max = count  -  6))
+      
+    } else
+    {
+      magic_number = 0
+    }
+    
+    query = paste0(
+      '
 SELECT DISTINCT ?item ?label WHERE {
   ?item wdt:P50 ?author.
   ?author wdt:P108 | wdt:P1416 wd:',
-    institution_qid,
-    '.
+      institution_qid,
+      '.
   ?item wdt:P2093 ?author_name_string.
   ?item rdfs:label ?label.
   FILTER (lang(?label)="en")
 }
 ORDER BY ?item OFFSET ', magic_number, ' LIMIT ', as.character(limit)
-  )
-  articles_df <- query_wikidata(query)
-  
-  articles_df <- add_links_to_article_df(articles_df)
-  
-  return(articles_df)
-}
+    )
+    articles_df <- query_wikidata(query)
+    
+    articles_df <- add_links_to_article_df(articles_df)
+    
+    return(articles_df)
+  }
 
 
 
