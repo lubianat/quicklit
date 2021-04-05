@@ -1,5 +1,5 @@
 library(shiny)
-
+library(stringr)
 source("utils.R")
 
 # User Interface ------------
@@ -16,6 +16,7 @@ ui <- navbarPage(
     "QuickLit",
     theme = theme,
     tabPanel("Main",
+             shinyFeedback::useShinyFeedback(),
              sidebarLayout(
                  sidebarPanel(
                      h4("Adding topics and authors to Wikidata"),
@@ -131,6 +132,8 @@ server <- function(input, output) {
     
     text_reactive <- eventReactive(input$submit, {
         qid <- input$qid
+        is_qid <- str_detect(qid, "^Q[0-9]+")
+        shinyFeedback::feedbackWarning("qid", !is_qid, "Please type a valid Q id")
         category <- input$advanced_radio
         if (category == "By author") {
             a <- get_articles_by_author(author_qid = qid)
@@ -173,6 +176,9 @@ server <- function(input, output) {
     },
     escape = FALSE,
     options = list(dom = "t"))
+    
+    
+    
 }
 
 # Run the application ---------
