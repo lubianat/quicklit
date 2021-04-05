@@ -134,6 +134,7 @@ server <- function(input, output) {
         qid <- input$qid
         is_qid <- str_detect(qid, "^Q[0-9]+")
         shinyFeedback::feedbackWarning("qid", !is_qid, "Please type a valid Q id")
+        req(is_qid)
         category <- input$advanced_radio
         if (category == "By author") {
             a <- get_articles_by_author(author_qid = qid)
