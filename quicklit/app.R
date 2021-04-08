@@ -1,5 +1,6 @@
 library(shiny)
 library(stringr)
+library(dplyr, warn.conflicts = FALSE)
 source("utils.R")
 
 # User Interface ------------
@@ -27,7 +28,7 @@ ui <- navbarPage(
                              "Basic",
                              radioButtons(
                                  inputId = "radio",
-                                 label = "Type of quick articles",
+                                 label = "Pre-selected categories:",
                                  choices = c(
                                      "COVID-19 article with author from Brazil",
                                      "COVID-19 article",
@@ -119,6 +120,21 @@ ui <- navbarPage(
 # Server ------------
 
 server <- function(input, output) {
+    
+    observeEvent(input$advanced_radio, {
+        
+        category <- input$advanced_radio
+        if (category == "By author") {
+            updateTextInput(inputId = "qid", value = "Q42614737")
+        } else if (category == "By institution") {
+            updateTextInput(inputId = "qid", value = "Q102292035")
+            
+        } else if (category == "By topic") {
+            updateTextInput(inputId = "qid", value = "Q10509939")
+            
+        }
+    })
+
     output$plot <- renderPlot({
         author_qid <- input$qid
         plot_author_complenetess_stack_bar(author_qid)
