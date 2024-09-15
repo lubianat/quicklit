@@ -102,7 +102,7 @@ ui <- navbarPage(
                  mainPanel(
                      h4("Help with articles in need of curation."),
                      p("It is quick and painless, and you don't need to know the article"),
-                     p("Check the Quickstart on the leftl to get started"),
+                     p("Check the Quickstart on the left to get started"),
                      dataTableOutput("candidate_qids")
                  )
              )),
